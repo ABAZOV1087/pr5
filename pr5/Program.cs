@@ -131,3 +131,74 @@ namespace UniversityManagementSystem
             Console.WriteLine($"Преподает курсов: {taughtCourses.Count}");
         }
     }
+
+    public class Course
+    {
+        public string CourseCode { get; private set; }
+        public string CourseName { get; private set; }
+        public string Description { get; private set; }
+        public int Credits { get; private set; }
+
+        private Teacher instructor;
+        private List<Student> enrolledStudents;
+
+        public Course(string courseCode, string courseName, string description, int credits)
+        {
+            if (string.IsNullOrWhiteSpace(courseCode))
+                throw new ArgumentException("Код курса не может быть пустым");
+            if (string.IsNullOrWhiteSpace(courseName))
+                throw new ArgumentException("Название курса не может быть пустым");
+            if (credits <= 0 || credits > 10)
+                throw new ArgumentException("Кредиты должны быть от 1 до 10");
+
+            CourseCode = courseCode;
+            CourseName = courseName;
+            Description = description ?? "";
+            Credits = credits;
+            enrolledStudents = new List<Student>();
+        }
+
+        public void AssignInstructor(Teacher teacher)
+        {
+            instructor = teacher;
+        }
+
+        public void EnrollStudent(Student student)
+        {
+            if (student == null)
+                throw new ArgumentNullException(nameof(student));
+
+            if (!enrolledStudents.Contains(student))
+            {
+                enrolledStudents.Add(student);
+            }
+        }
+
+        public void DisplayCourseInfo()
+        {
+            Console.WriteLine($"\nКурс: {CourseName} ({CourseCode})");
+            Console.WriteLine($"Описание: {Description}");
+            Console.WriteLine($"Кредиты: {Credits}");
+            Console.WriteLine($"Преподаватель: {(instructor != null ? instructor.Name : "Не назначен")}");
+            Console.WriteLine($"Записанных студентов: {enrolledStudents.Count}");
+        }
+
+        public void DisplayEnrolledStudents()
+        {
+            Console.WriteLine($"\nСтуденты курса {CourseName}:");
+            if (enrolledStudents.Count == 0)
+            {
+                Console.WriteLine("Нет записанных студентов");
+                return;
+            }
+
+            foreach (var student in enrolledStudents)
+            {
+                Console.WriteLine($"- {student.Name} (ID: {student.Id})");
+            }
+        }
+
+        public Teacher GetInstructor() => instructor;
+        public List<Student> GetEnrolledStudents() => new List<Student>(enrolledStudents);
+        public bool HasInstructor() => instructor != null;
+    }
