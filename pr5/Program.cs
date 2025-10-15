@@ -202,3 +202,142 @@ namespace UniversityManagementSystem
         public List<Student> GetEnrolledStudents() => new List<Student>(enrolledStudents);
         public bool HasInstructor() => instructor != null;
     }
+
+    public class UniversityManager
+    {
+        private List<Student> students;
+        private List<Teacher> teachers;
+        private List<Course> courses;
+        private int nextStudentId;
+        private int nextTeacherId;
+
+        public UniversityManager()
+        {
+            students = new List<Student>();
+            teachers = new List<Teacher>();
+            courses = new List<Course>();
+            nextStudentId = 1;
+            nextTeacherId = 1;
+        }
+
+        public void AddStudent(string name, int age, string email, string phone)
+        {
+            var student = new Student(nextStudentId++, name, age, email, phone);
+            students.Add(student);
+            Console.WriteLine($"Студент {name} добавлен с ID: {student.Id}");
+        }
+
+        public void AddTeacher(string name, int age, string email, string phone, string specialization)
+        {
+            var teacher = new Teacher(nextTeacherId++, name, age, email, phone, specialization);
+            teachers.Add(teacher);
+            Console.WriteLine($"Преподаватель {name} добавлен с ID: {teacher.Id}");
+        }
+        public void CreateCourse(string courseCode, string courseName, string description, int credits)
+        {
+            var course = new Course(courseCode, courseName, description, credits);
+            courses.Add(course);
+            Console.WriteLine($"Курс {courseName} создан с кодом: {courseCode}");
+        }
+
+        public void DisplayAllStudents()
+        {
+            Console.WriteLine("\n=== Все студенты ===");
+            if (students.Count == 0)
+            {
+                Console.WriteLine("Нет студентов в системе");
+                return;
+            }
+
+            foreach (var student in students)
+            {
+                student.DisplayInfo();
+                Console.WriteLine("---");
+            }
+        }
+
+        public void DisplayAllTeachers()
+        {
+            Console.WriteLine("\n=== Все преподаватели ===");
+            if (teachers.Count == 0)
+            {
+                Console.WriteLine("Нет преподавателей в системе");
+                return;
+            }
+
+            foreach (var teacher in teachers)
+            {
+                teacher.DisplayInfo();
+                Console.WriteLine("---");
+            }
+        }
+
+        public void DisplayAllCourses()
+        {
+            Console.WriteLine("\n=== Все курсы ===");
+            if (courses.Count == 0)
+            {
+                Console.WriteLine("Нет курсов в системе");
+                return;
+            }
+
+            foreach (var course in courses)
+            {
+                course.DisplayCourseInfo();
+                Console.WriteLine("---");
+            }
+        }
+
+        public void EnrollStudentInCourse(int studentId, string courseCode)
+        {
+            var student = students.FirstOrDefault(s => s.Id == studentId);
+            var course = courses.FirstOrDefault(c => c.CourseCode == courseCode);
+
+            if (student == null)
+                throw new ArgumentException($"Студент с ID {studentId} не найден");
+            if (course == null)
+                throw new ArgumentException($"Курс с кодом {courseCode} не найден");
+
+            student.EnrollInCourse(course);
+            Console.WriteLine($"Студент {student.Name} записан на курс {course.CourseName}");
+        }
+
+        public void AssignTeacherToCourse(int teacherId, string courseCode)
+        {
+            var teacher = teachers.FirstOrDefault(t => t.Id == teacherId);
+            var course = courses.FirstOrDefault(c => c.CourseCode == courseCode);
+
+            if (teacher == null)
+                throw new ArgumentException($"Преподаватель с ID {teacherId} не найден");
+            if (course == null)
+                throw new ArgumentException($"Курс с кодом {courseCode} не найден");
+
+            teacher.AssignToCourse(course);
+            Console.WriteLine($"Преподаватель {teacher.Name} назначен на курс {course.CourseName}");
+        }
+
+        public void DisplayStudentCourses(int studentId)
+        {
+            var student = students.FirstOrDefault(s => s.Id == studentId);
+            if (student == null)
+                throw new ArgumentException($"Студент с ID {studentId} не найден");
+
+            student.DisplayEnrolledCourses();
+        }
+
+        public void DisplayCourseStudents(string courseCode)
+        {
+            var course = courses.FirstOrDefault(c => c.CourseCode == courseCode);
+            if (course == null)
+                throw new ArgumentException($"Курс с кодом {courseCode} не найден");
+
+            course.DisplayEnrolledStudents();
+        }
+
+        public bool StudentExists(int studentId) => students.Any(s => s.Id == studentId);
+        public bool TeacherExists(int teacherId) => teachers.Any(t => t.Id == teacherId);
+        public bool CourseExists(string courseCode) => courses.Any(c => c.CourseCode == courseCode);
+        public List<Student> GetAllStudents() => new List<Student>(students);
+        public List<Teacher> GetAllTeachers() => new List<Teacher>(teachers);
+        public List<Course> GetAllCourses() => new List<Course>(courses);
+    }
