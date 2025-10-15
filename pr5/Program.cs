@@ -79,3 +79,55 @@ namespace UniversityManagementSystem
             Console.WriteLine($"Записан на курсов: {enrolledCourses.Count}");
         }
     }
+
+    public class Teacher : Person
+    {
+        private List<Course> taughtCourses;
+        public string Specialization { get; private set; }
+
+        public Teacher(int id, string name, int age, string email, string phone, string specialization)
+        : base(id, name, age, email, phone)
+        {
+            if (string.IsNullOrWhiteSpace(specialization))
+                throw new ArgumentException("Специализация не может быть пустой");
+
+            Specialization = specialization;
+            taughtCourses = new List<Course>();
+        }
+
+        public void AssignToCourse(Course course)
+        {
+            if (course == null)
+                throw new ArgumentNullException(nameof(course));
+
+            if (!taughtCourses.Contains(course))
+            {
+                taughtCourses.Add(course);
+                course.AssignInstructor(this);
+            }
+        }
+
+        public void DisplayTaughtCourses()
+        {
+            Console.WriteLine($"\nКурсы преподавателя {Name}:");
+            if (taughtCourses.Count == 0)
+            {
+                Console.WriteLine("Нет преподаваемых курсов");
+                return;
+            }
+
+            foreach (var course in taughtCourses)
+            {
+                Console.WriteLine($"- {course.CourseName} ({course.CourseCode})");
+            }
+        }
+
+        public List<Course> GetTaughtCourses() => new List<Course>(taughtCourses);
+        public override void DisplayInfo()
+        {
+            Console.WriteLine($"Преподаватель: {Name} (ID: {Id})");
+            Console.WriteLine($"Специализация: {Specialization}");
+            Console.WriteLine($"Возраст: {Age}, Email: {Email}, Телефон: {Phone}");
+            Console.WriteLine($"Преподает курсов: {taughtCourses.Count}");
+        }
+    }
