@@ -748,3 +748,16 @@ namespace UniversityManagementSystem
             universityManager.DisplayAllCourses();
         }
     }
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("=== Система управления университетом ===");
+            Console.WriteLine("Декомпозиция завершена. Система готова к работе.");
+
+            MenuManager menuManager = new MenuManager();
+            menuManager.ProcessUserInput();
+        }
+    }
+}
