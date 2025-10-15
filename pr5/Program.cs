@@ -32,4 +32,50 @@ namespace UniversityManagementSystem
 
         public abstract void DisplayInfo();
     }
-}
+
+    public class Student : Person
+    {
+        private List<Course> enrolledCourses;
+
+        public Student(int id, string name, int age, string email, string phone)
+        : base(id, name, age, email, phone)
+        {
+            enrolledCourses = new List<Course>();
+        }
+
+        public void EnrollInCourse(Course course)
+        {
+            if (course == null)
+                throw new ArgumentNullException(nameof(course));
+
+            if (!enrolledCourses.Contains(course))
+            {
+                enrolledCourses.Add(course);
+                course.EnrollStudent(this);
+            }
+        }
+
+        public void DisplayEnrolledCourses()
+        {
+            Console.WriteLine($"\nКурсы студента {Name}:");
+            if (enrolledCourses.Count == 0)
+            {
+                Console.WriteLine("Нет записанных курсов");
+                return;
+            }
+
+            foreach (var course in enrolledCourses)
+            {
+                Console.WriteLine($"- {course.CourseName} ({course.CourseCode})");
+            }
+        }
+
+        public List<Course> GetEnrolledCourses() => new List<Course>(enrolledCourses);
+
+        public override void DisplayInfo()
+        {
+            Console.WriteLine($"Студент: {Name} (ID: {Id})");
+            Console.WriteLine($"Возраст: {Age}, Email: {Email}, Телефон: {Phone}");
+            Console.WriteLine($"Записан на курсов: {enrolledCourses.Count}");
+        }
+    }
